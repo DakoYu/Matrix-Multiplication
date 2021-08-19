@@ -1,33 +1,59 @@
-def is_valid(a):
-    prev = len(a[0])
-    for i in range(1, len(a)):
-        if prev != len(a[i]):
-            return False
-    return True
+maze = [['.','.','.','.'],
+['.','x','x','x'],
+['.','.','.','x'],
+['x','x','.','.']]
 
-def matrix_multiply(a,b):
-    res1 = is_valid(a)
-    res2 = is_valid(b)
-    if res1 != res2:
-        return []
-    matrix = create_matrix(len(a), len(b[0]))
-    print(matrix)
-    for i in range(len(a)):
-        for j in range(len(b[0])):
-            for k in range(len(b)):
-                matrix[i][j] += a[i][k] * b[k][j]
-    return matrix
-
-def create_matrix(m, n):
-    matrix = []
-    for i in range(m):
-        my_row = []
-        for j in range(n):
-            my_row.append(0)
-        matrix.append(my_row)
-    return matrix
+# functions to print maze
+def print_maze(maze):
+    for row in maze:
+        # variable to print the line
+        output = ''
+        for element in row:
+            output += element + ' '
+        print (output)
 
 
-a = [[1,2,3],[4,5,6]]
-b = [[1,2],[3,4], [5,6]]
-print(matrix_multiply(a,b))
+# funnction for client
+def maze_solution(maze):
+    # Helper Function to execute and figure out the solution
+    return maze_solution_helper(maze, [], 0, 0)
+
+# helper function
+def maze_solution_helper(maze, sol, row, col):
+    # 3 Base Case
+    # Case 1: Exit Path is found
+    row_end = len(maze)
+    col_end = len(maze[0])
+    if row == row_end - 1 and col == col_end - 1:
+        return sol
+    
+    # Case 2: Maze is out of the bounnd
+    if row >= row_end or col >= col_end:
+        return None
+
+    # Case 3: Maze is at x spot
+    if maze[row][col] == 'x':
+        return None
+
+    # Maze is moving to the right
+    sol.append('r')
+    sol_right = maze_solution_helper(maze, sol, row, col + 1)
+    if sol_right is not None:
+        return sol_right
+
+    # pop the solution if right does not work
+    sol.pop()
+
+    # Maze is moving to the bottom
+    sol.append('d')
+    sol_down = maze_solution_helper(maze, sol, row + 1, col)
+    if sol_down is not None:
+        return sol_down
+
+    # if no solution 
+    sol.pop()
+    return None
+
+
+print_maze(maze)
+print(maze_solution(maze))
